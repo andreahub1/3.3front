@@ -1,0 +1,153 @@
+<div class="tienda">
+
+  <nav class="navbar">
+    <div class="logo">Buscador Inteligente</div>
+  </nav>
+
+  <section class="encabezado">
+    <p class="etiqueta">NUEVA COLECCIÓN</p>
+    <h1>Encuentra lo que buscas</h1>
+    <p>Explora nuestros productos y encuentra tus favoritos.</p>
+  </section>
+
+  <div class="buscador">
+    <span>⌕</span>
+    <input
+      type="text"
+      [formControl]="busqueda"
+      placeholder="Buscar productos..."
+    >
+  </div>
+
+  <main class="catalogo">
+
+    <aside class="sidebar">
+
+      <h3>Filtros</h3>
+
+      <div class="grupo-filtro">
+        <h4>Categorías</h4>
+
+        <label class="opcion" *ngFor="let item of categorias">
+          <input
+            type="radio"
+            name="categoria"
+            [value]="item.nombre"
+            [checked]="categoria.value === item.nombre"
+            (change)="categoria.setValue(item.nombre)"
+          >
+
+          <span>{{ item.nombre }}</span>
+          <small>{{ item.cantidad }}</small>
+        </label>
+      </div>
+
+      <div class="grupo-filtro">
+        <h4>Rango de precios</h4>
+
+        <div class="valores-precio">
+          <span>${{ precioMin.value | number }}</span>
+          <span>${{ precioMax.value | number }}</span>
+        </div>
+
+        <div class="rango-slider">
+
+          <div
+            class="linea-rango"
+            [style.left.%]="(precioMin.value! / 20000) * 100"
+            [style.width.%]="((precioMax.value! - precioMin.value!) / 20000) * 100">
+          </div>
+
+          <input
+            class="rango-min"
+            type="range"
+            min="0"
+            max="20000"
+            step="100"
+            [value]="precioMin.value"
+            (input)="cambiarPrecioMin($event)"
+            aria-label="Precio mínimo"
+          >
+
+          <input
+            class="rango-max"
+            type="range"
+            min="0"
+            max="20000"
+            step="100"
+            [value]="precioMax.value"
+            (input)="cambiarPrecioMax($event)"
+            aria-label="Precio máximo"
+          >
+
+        </div>
+
+        <div class="limites-precio">
+          <span>$0</span>
+          <span>$20,000</span>
+        </div>
+
+        <p class="ayuda-precio">Precios en pesos mexicanos (MXN)</p>
+      </div>
+
+      <button class="limpiar" (click)="
+        busqueda.setValue('');
+        categoria.setValue('Todas');
+        precioMin.setValue(0);
+        precioMax.setValue(20000)
+      ">
+        Limpiar filtros
+      </button>
+
+    </aside>
+
+    <section class="contenido">
+
+      <div class="resultados">
+        <h2>Todos los productos</h2>
+        <p>Encuentra el producto ideal para ti.</p>
+      </div>
+
+      <div class="grid-productos">
+
+        @if (productosFiltrados$ | async; as productos) {
+
+          @for (producto of productos; track producto.nombre) {
+
+            <article class="tarjeta">
+
+              <div class="imagen-producto">
+                <img [src]="producto.imagen" [alt]="producto.nombre">
+                <span class="categoria">{{ producto.categoria }}</span>
+              </div>
+
+              <div class="info-producto">
+                <h3>{{ producto.nombre }}</h3>
+                <p>{{ producto.descripcion }}</p>
+
+                <div class="precio">
+                  ${{ producto.precio | number }}
+                  <span>MXN</span>
+                </div>
+              </div>
+
+            </article>
+
+          } @empty {
+
+            <div class="sin-resultados">
+              <h3>No encontramos productos</h3>
+              <p>Intenta cambiar los filtros de búsqueda.</p>
+            </div>
+
+          }
+
+        }
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
